@@ -41,11 +41,33 @@ export default function SignUp() {
 
       if (signUpError) throw signUpError;
 
-      if (data) {
+      if (data?.user) {
+        // Create profile record
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .insert([
+            {
+              id: data.user.id,
+              first_name: formData.firstName,
+              last_name: formData.lastName,
+              email: formData.email,
+            },
+          ]);
+
+        if (profileError) {
+          // Delete the auth user if profile creation fails
+          await supabase.auth.admin.deleteUser(data.user.id);
+          throw new Error('Failed to create user profile. Please try again.');
+        }
+        
         router.push('/auth/confirmation');
       }
     } catch (error: any) {
       setError(error.message);
+      // If there was an error creating the profile, we want to show a more user-friendly message
+      if (error.message.includes('Failed to create user profile')) {
+        setError('Something went wrong while creating your account. Please try again or contact support.');
+      }
     } finally {
       setLoading(false);
     }
