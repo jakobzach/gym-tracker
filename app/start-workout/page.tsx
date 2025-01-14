@@ -3,10 +3,16 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Layout from '../../components/Layout';
-import { Button } from "@/components/ui/button"
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select"
+import { Button } from '@/components/ui/button';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from '@/components/ui/select';
 import { supabase } from '../../lib/supabase';
 
 interface WorkoutPlan {
@@ -91,13 +97,15 @@ export default function StartWorkout() {
         <CardContent>
           <div className="space-y-4">
             <div className="space-y-2">
-              <label htmlFor="plan-select" className="text-sm font-medium">Select Workout Plan</label>
+              <label htmlFor="plan-select" className="text-sm font-medium">
+                Select Workout Plan
+              </label>
               <Select value={selectedPlan} onValueChange={handlePlanChange}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select a workout plan" />
                 </SelectTrigger>
                 <SelectContent>
-                  {plans.map((plan) => (
+                  {plans.map(plan => (
                     <SelectItem key={plan.id} value={plan.id}>
                       {plan.name}
                     </SelectItem>
@@ -105,11 +113,7 @@ export default function StartWorkout() {
                 </SelectContent>
               </Select>
             </div>
-            <Button
-              onClick={startWorkout}
-              disabled={!selectedPlan}
-              className="w-full"
-            >
+            <Button onClick={startWorkout} disabled={!selectedPlan} className="w-full">
               Start Workout
             </Button>
           </div>
@@ -118,4 +122,3 @@ export default function StartWorkout() {
     </Layout>
   );
 }
-

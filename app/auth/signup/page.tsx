@@ -5,11 +5,18 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Dumbbell } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
+  Card,
+  _CardDescription as CardDescription,
+  CardContent,
+  _CardHeader as CardHeader,
+  _CardTitle as CardTitle,
+  CardFooter,
+} from '@/components/ui/card';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 export default function SignUp() {
   const router = useRouter();
@@ -43,30 +50,30 @@ export default function SignUp() {
 
       if (data?.user) {
         // Create profile record
-        const { error: profileError } = await supabase
-          .from('profiles')
-          .insert([
-            {
-              id: data.user.id,
-              first_name: formData.firstName,
-              last_name: formData.lastName,
-              email: formData.email,
-            },
-          ]);
+        const { error: profileError } = await supabase.from('profiles').insert([
+          {
+            id: data.user.id,
+            first_name: formData.firstName,
+            last_name: formData.lastName,
+            email: formData.email,
+          },
+        ]);
 
         if (profileError) {
           // Delete the auth user if profile creation fails
           await supabase.auth.admin.deleteUser(data.user.id);
           throw new Error('Failed to create user profile. Please try again.');
         }
-        
+
         router.push('/auth/confirmation');
       }
     } catch (error: any) {
       setError(error.message);
       // If there was an error creating the profile, we want to show a more user-friendly message
       if (error.message.includes('Failed to create user profile')) {
-        setError('Something went wrong while creating your account. Please try again or contact support.');
+        setError(
+          'Something went wrong while creating your account. Please try again or contact support.'
+        );
       }
     } finally {
       setLoading(false);
@@ -84,7 +91,8 @@ export default function SignUp() {
         <div className="relative z-20 mt-auto">
           <blockquote className="space-y-2">
             <p className="text-lg">
-              "This app has completely transformed how I track my workouts. The interface is intuitive, and the progress tracking is exactly what I needed."
+              "This app has completely transformed how I track my workouts. The interface is
+              intuitive, and the progress tracking is exactly what I needed."
             </p>
             <footer className="text-sm">Sofia Davis</footer>
           </blockquote>
@@ -93,9 +101,7 @@ export default function SignUp() {
       <div className="lg:p-8">
         <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
           <div className="flex flex-col space-y-2 text-center">
-            <h1 className="text-2xl font-semibold tracking-tight">
-              Create an account
-            </h1>
+            <h1 className="text-2xl font-semibold tracking-tight">Create an account</h1>
             <p className="text-sm text-muted-foreground">
               Enter your details below to create your account
             </p>
@@ -115,9 +121,7 @@ export default function SignUp() {
                       id="firstName"
                       placeholder="John"
                       value={formData.firstName}
-                      onChange={(e) =>
-                        setFormData({ ...formData, firstName: e.target.value })
-                      }
+                      onChange={e => setFormData({ ...formData, firstName: e.target.value })}
                       required
                     />
                   </div>
@@ -127,9 +131,7 @@ export default function SignUp() {
                       id="lastName"
                       placeholder="Doe"
                       value={formData.lastName}
-                      onChange={(e) =>
-                        setFormData({ ...formData, lastName: e.target.value })
-                      }
+                      onChange={e => setFormData({ ...formData, lastName: e.target.value })}
                       required
                     />
                   </div>
@@ -141,9 +143,7 @@ export default function SignUp() {
                     type="email"
                     placeholder="john@example.com"
                     value={formData.email}
-                    onChange={(e) =>
-                      setFormData({ ...formData, email: e.target.value })
-                    }
+                    onChange={e => setFormData({ ...formData, email: e.target.value })}
                     required
                   />
                 </div>
@@ -154,30 +154,21 @@ export default function SignUp() {
                     type="password"
                     placeholder="••••••••"
                     value={formData.password}
-                    onChange={(e) =>
-                      setFormData({ ...formData, password: e.target.value })
-                    }
+                    onChange={e => setFormData({ ...formData, password: e.target.value })}
                     required
                   />
                 </div>
               </CardContent>
               <CardFooter className="flex flex-col space-y-4">
-                <Button 
-                  type="submit" 
-                  className="w-full" 
-                  disabled={loading}
-                >
-                  {loading ? "Creating account..." : "Create account"}
+                <Button type="submit" className="w-full" disabled={loading}>
+                  {loading ? 'Creating account...' : 'Create account'}
                 </Button>
               </CardFooter>
             </form>
           </Card>
           <p className="px-8 text-center text-sm text-muted-foreground">
-            Already have an account?{" "}
-            <Link 
-              href="/auth/signin" 
-              className="underline underline-offset-4 hover:text-primary"
-            >
+            Already have an account?{' '}
+            <Link href="/auth/signin" className="underline underline-offset-4 hover:text-primary">
               Sign in
             </Link>
           </p>
