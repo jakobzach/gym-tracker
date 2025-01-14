@@ -1,69 +1,81 @@
 'use client';
 
-import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
-import Layout from '../../components/Layout'
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog"
-import { supabase } from '../../lib/supabase'
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import Layout from '../../components/Layout';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import {
+  Dialog,
+  _DialogTrigger as DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from '@/components/ui/dialog';
+import { supabase } from '../../lib/supabase';
 
 export default function Account() {
-  const [user, setUser] = useState<any>(null)
-  const [firstName, setFirstName] = useState('')
-  const [lastName, setLastName] = useState('')
-  const [loading, setLoading] = useState(true)
-  const [updateLoading, setUpdateLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState<string | null>(null)
-  const [logoutDialogOpen, setLogoutDialogOpen] = useState(false)
-  const [deleteAccountDialogOpen, setDeleteAccountDialogOpen] = useState(false)
+  const [user, setUser] = useState<any>(null);
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [updateLoading, setUpdateLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+  const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
+  const [deleteAccountDialogOpen, setDeleteAccountDialogOpen] = useState(false);
 
-  const router = useRouter()
+  const router = useRouter();
 
   useEffect(() => {
     const getProfile = async () => {
       try {
-        const { data: { user } } = await supabase.auth.getUser()
+        const {
+          data: { _user: user },
+        } = await supabase.auth.getUser();
         if (user) {
-          setUser(user)
+          setUser(user);
           const { data, error } = await supabase
             .from('profiles')
             .select('first_name, last_name')
             .eq('id', user.id)
-            .single()
+            .single();
 
           if (error) {
-            console.error('Error fetching profile:', error)
-            setError('Failed to fetch profile data')
+            console.error('Error fetching profile:', error);
+            setError('Failed to fetch profile data');
           } else if (data) {
-            setFirstName(data.first_name || '')
-            setLastName(data.last_name || '')
+            setFirstName(data.first_name || '');
+            setLastName(data.last_name || '');
           }
         }
       } catch (err) {
-        console.error('Error in getProfile:', err)
-        setError('An unexpected error occurred while fetching profile')
+        console.error('Error in getProfile:', err);
+        setError('An unexpected error occurred while fetching profile');
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
-    getProfile()
-  }, [])
+    getProfile();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError(null)
-    setSuccess(null)
-    setUpdateLoading(true)
+    e.preventDefault();
+    setError(null);
+    setSuccess(null);
+    setUpdateLoading(true);
 
     try {
-      const { data: { user } } = await supabase.auth.getUser()
+      const {
+        data: { _user: user },
+      } = await supabase.auth.getUser();
       if (!user) {
-        throw new Error('No user found')
+        throw new Error('No user found');
       }
 
       const updates = {
@@ -71,60 +83,57 @@ export default function Account() {
         first_name: firstName,
         last_name: lastName,
         updated_at: new Date().toISOString(),
-      }
+      };
 
-      const { data, error } = await supabase
-        .from('profiles')
-        .upsert(updates)
-        .select()
+      const { data, error } = await supabase.from('profiles').upsert(updates).select();
 
       if (error) {
-        throw error
+        throw error;
       }
 
       if (data) {
-        console.log('Updated profile:', data)
+        console.log('Updated profile:', data);
       }
 
-      setSuccess('Profile updated successfully')
+      setSuccess('Profile updated successfully');
     } catch (err: any) {
-      console.error('Error updating profile:', err)
-      setError(err.message || 'Failed to update profile. Please try again.')
+      console.error('Error updating profile:', err);
+      setError(err.message || 'Failed to update profile. Please try again.');
     } finally {
-      setUpdateLoading(false)
+      setUpdateLoading(false);
     }
-  }
+  };
 
   const handleLogout = async () => {
-    setLogoutDialogOpen(false)
-    setUpdateLoading(true)
+    setLogoutDialogOpen(false);
+    setUpdateLoading(true);
     try {
-      const { error } = await supabase.auth.signOut()
-      if (error) throw error
-      router.push('/auth/signin')
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+      router.push('/auth/signin');
     } catch (err: any) {
-      console.error('Error logging out:', err)
-      setError(err.message || 'Failed to log out. Please try again.')
+      console.error('Error logging out:', err);
+      setError(err.message || 'Failed to log out. Please try again.');
     } finally {
-      setUpdateLoading(false)
+      setUpdateLoading(false);
     }
-  }
+  };
 
   const handleDeleteAccount = async () => {
-    setDeleteAccountDialogOpen(false)
-    setUpdateLoading(true)
+    setDeleteAccountDialogOpen(false);
+    setUpdateLoading(true);
     try {
-      const { error } = await supabase.rpc('delete_user')
-      if (error) throw error
-      await supabase.auth.signOut()
-      router.push('/auth/signin')
+      const { error } = await supabase.rpc('delete_user');
+      if (error) throw error;
+      await supabase.auth.signOut();
+      router.push('/auth/signin');
     } catch (err: any) {
-      console.error('Error deleting account:', err)
-      setError(err.message || 'Failed to delete account. Please try again.')
+      console.error('Error deleting account:', err);
+      setError(err.message || 'Failed to delete account. Please try again.');
     } finally {
-      setUpdateLoading(false)
+      setUpdateLoading(false);
     }
-  }
+  };
 
   if (loading) {
     return (
@@ -133,7 +142,7 @@ export default function Account() {
           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900"></div>
         </div>
       </Layout>
-    )
+    );
   }
 
   return (
@@ -144,23 +153,35 @@ export default function Account() {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
-            {error && <Alert variant="destructive"><AlertDescription>{error}</AlertDescription></Alert>}
-            {success && <Alert variant="default"><AlertDescription>{success}</AlertDescription></Alert>}
+            {error && (
+              <Alert variant="destructive">
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
+            {success && (
+              <Alert variant="default">
+                <AlertDescription>{success}</AlertDescription>
+              </Alert>
+            )}
             <div className="space-y-2">
-              <label htmlFor="firstName" className="text-sm font-medium">First Name</label>
+              <label htmlFor="firstName" className="text-sm font-medium">
+                First Name
+              </label>
               <Input
                 id="firstName"
                 value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
+                onChange={e => setFirstName(e.target.value)}
                 required
               />
             </div>
             <div className="space-y-2">
-              <label htmlFor="lastName" className="text-sm font-medium">Last Name</label>
+              <label htmlFor="lastName" className="text-sm font-medium">
+                Last Name
+              </label>
               <Input
                 id="lastName"
                 value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
+                onChange={e => setLastName(e.target.value)}
                 required
               />
             </div>
@@ -169,11 +190,7 @@ export default function Account() {
             </Button>
           </form>
           <div className="mt-8 space-y-4">
-            <Button
-              variant="outline"
-              className="w-full"
-              onClick={() => setLogoutDialogOpen(true)}
-            >
+            <Button variant="outline" className="w-full" onClick={() => setLogoutDialogOpen(true)}>
               Log Out
             </Button>
             <Button
@@ -191,12 +208,12 @@ export default function Account() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Confirm Logout</DialogTitle>
-            <DialogDescription>
-              Are you sure you want to log out?
-            </DialogDescription>
+            <DialogDescription>Are you sure you want to log out?</DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setLogoutDialogOpen(false)}>Cancel</Button>
+            <Button variant="outline" onClick={() => setLogoutDialogOpen(false)}>
+              Cancel
+            </Button>
             <Button onClick={handleLogout}>Log Out</Button>
           </DialogFooter>
         </DialogContent>
@@ -211,12 +228,15 @@ export default function Account() {
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setDeleteAccountDialogOpen(false)}>Cancel</Button>
-            <Button variant="destructive" onClick={handleDeleteAccount}>Delete Account</Button>
+            <Button variant="outline" onClick={() => setDeleteAccountDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={handleDeleteAccount}>
+              Delete Account
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
     </Layout>
-  )
+  );
 }
-

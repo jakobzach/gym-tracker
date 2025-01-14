@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import Layout from '../../components/Layout';
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
-import { Alert, AlertDescription } from "@/components/ui/alert"
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { supabase } from '../../lib/supabase';
 
 interface WorkoutLog {
@@ -77,7 +77,7 @@ export default function Workouts() {
         <p>No workout logs found. Start a workout to create a log!</p>
       ) : (
         <div className="grid gap-6 md:grid-cols-2">
-          {workoutLogs.map((log) => (
+          {workoutLogs.map(log => (
             <Card key={log.id}>
               <CardHeader>
                 <CardTitle>{new Date(log.date).toLocaleDateString()}</CardTitle>
@@ -101,4 +101,3 @@ export default function Workouts() {
     </Layout>
   );
 }
-
