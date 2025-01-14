@@ -3,11 +3,17 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Layout from '../../../components/Layout';
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select"
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from '@/components/ui/select';
 import { supabase } from '../../../lib/supabase';
 import { Trash2, Plus } from 'lucide-react';
 
@@ -38,7 +44,8 @@ export default function EditPlan({ params }: { params: { id: string } }) {
       setLoading(true);
       const { data, error } = await supabase
         .from('workout_plans')
-        .select(`
+        .select(
+          `
           id,
           name,
           workout_plan_exercises (
@@ -49,19 +56,22 @@ export default function EditPlan({ params }: { params: { id: string } }) {
               type
             )
           )
-        `)
+        `
+        )
         .eq('id', params.id)
         .single();
 
       if (error) throw error;
 
       setPlanName(data.name);
-      setExercises(data.workout_plan_exercises.map((wpe: any) => ({
-        id: wpe.exercises.id,
-        name: wpe.exercises.name,
-        type: wpe.exercises.type as Exercise['type'],
-        sets: wpe.sets
-      })));
+      setExercises(
+        data.workout_plan_exercises.map((wpe: any) => ({
+          id: wpe.exercises.id,
+          name: wpe.exercises.name,
+          type: wpe.exercises.type as Exercise['type'],
+          sets: wpe.sets,
+        }))
+      );
     } catch (error: any) {
       setError(error.message);
     } finally {
@@ -71,12 +81,15 @@ export default function EditPlan({ params }: { params: { id: string } }) {
 
   const addExercise = () => {
     if (newExerciseName && newExerciseType && newExerciseSets) {
-      setExercises([...exercises, {
-        id: Date.now(), // temporary id
-        name: newExerciseName,
-        type: newExerciseType,
-        sets: parseInt(newExerciseSets)
-      }]);
+      setExercises([
+        ...exercises,
+        {
+          id: Date.now(), // temporary id
+          name: newExerciseName,
+          type: newExerciseType,
+          sets: parseInt(newExerciseSets),
+        },
+      ]);
       setNewExerciseName('');
       setNewExerciseType('Dumbbell');
       setNewExerciseSets('');
@@ -88,9 +101,9 @@ export default function EditPlan({ params }: { params: { id: string } }) {
   };
 
   const updateExercise = (id: number, field: keyof Exercise, value: string | number) => {
-    setExercises(exercises.map(exercise =>
-      exercise.id === id ? { ...exercise, [field]: value } : exercise
-    ));
+    setExercises(
+      exercises.map(exercise => (exercise.id === id ? { ...exercise, [field]: value } : exercise))
+    );
   };
 
   const savePlan = async () => {
@@ -103,10 +116,7 @@ export default function EditPlan({ params }: { params: { id: string } }) {
       if (error) throw error;
 
       // Remove existing exercises
-      await supabase
-        .from('workout_plan_exercises')
-        .delete()
-        .eq('workout_plan_id', params.id);
+      await supabase.from('workout_plan_exercises').delete().eq('workout_plan_id', params.id);
 
       // Add updated exercises
       for (const exercise of exercises) {
@@ -118,13 +128,11 @@ export default function EditPlan({ params }: { params: { id: string } }) {
 
         if (exerciseError) throw exerciseError;
 
-        const { error: linkError } = await supabase
-          .from('workout_plan_exercises')
-          .insert({
-            workout_plan_id: params.id,
-            exercise_id: exerciseData.id,
-            sets: exercise.sets
-          });
+        const { error: linkError } = await supabase.from('workout_plan_exercises').insert({
+          workout_plan_id: params.id,
+          exercise_id: exerciseData.id,
+          sets: exercise.sets,
+        });
 
         if (linkError) throw linkError;
       }
@@ -153,30 +161,42 @@ export default function EditPlan({ params }: { params: { id: string } }) {
           <CardTitle className="text-2xl font-bold">Edit Workout Plan</CardTitle>
         </CardHeader>
         <CardContent>
-          {error && <Alert variant="destructive"><AlertDescription>{error}</AlertDescription></Alert>}
-          {success && <Alert variant="default"><AlertDescription>{success}</AlertDescription></Alert>}
+          {error && (
+            <Alert variant="destructive">
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
+          {success && (
+            <Alert variant="default">
+              <AlertDescription>{success}</AlertDescription>
+            </Alert>
+          )}
           <div className="space-y-4">
             <div className="space-y-2">
-              <label htmlFor="planName" className="text-sm font-medium">Plan Name</label>
+              <label htmlFor="planName" className="text-sm font-medium">
+                Plan Name
+              </label>
               <Input
                 id="planName"
                 value={planName}
-                onChange={(e) => setPlanName(e.target.value)}
+                onChange={e => setPlanName(e.target.value)}
                 placeholder="Enter plan name"
               />
             </div>
             <div className="space-y-2">
               <h3 className="text-lg font-semibold">Exercises</h3>
-              {exercises.map((exercise) => (
+              {exercises.map(exercise => (
                 <div key={exercise.id} className="flex items-center space-x-2">
                   <Input
                     value={exercise.name}
-                    onChange={(e) => updateExercise(exercise.id, 'name', e.target.value)}
+                    onChange={e => updateExercise(exercise.id, 'name', e.target.value)}
                     placeholder="Exercise name"
                   />
                   <Select
                     value={exercise.type}
-                    onValueChange={(value: Exercise['type']) => updateExercise(exercise.id, 'type', value)}
+                    onValueChange={(value: Exercise['type']) =>
+                      updateExercise(exercise.id, 'type', value)
+                    }
                   >
                     <SelectTrigger className="w-[180px]">
                       <SelectValue placeholder="Select type" />
@@ -193,7 +213,7 @@ export default function EditPlan({ params }: { params: { id: string } }) {
                   <Input
                     type="number"
                     value={exercise.sets}
-                    onChange={(e) => updateExercise(exercise.id, 'sets', parseInt(e.target.value))}
+                    onChange={e => updateExercise(exercise.id, 'sets', parseInt(e.target.value))}
                     placeholder="Sets"
                     className="w-20"
                   />
@@ -208,7 +228,7 @@ export default function EditPlan({ params }: { params: { id: string } }) {
               <div className="flex items-center space-x-2">
                 <Input
                   value={newExerciseName}
-                  onChange={(e) => setNewExerciseName(e.target.value)}
+                  onChange={e => setNewExerciseName(e.target.value)}
                   placeholder="New exercise name"
                 />
                 <Select
@@ -230,7 +250,7 @@ export default function EditPlan({ params }: { params: { id: string } }) {
                 <Input
                   type="number"
                   value={newExerciseSets}
-                  onChange={(e) => setNewExerciseSets(e.target.value)}
+                  onChange={e => setNewExerciseSets(e.target.value)}
                   placeholder="Sets"
                   className="w-20"
                 />
@@ -248,4 +268,3 @@ export default function EditPlan({ params }: { params: { id: string } }) {
     </Layout>
   );
 }
-

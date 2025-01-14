@@ -5,11 +5,11 @@ import { useRouter } from 'next/navigation';
 import { Play, Pause, ChevronRight } from 'lucide-react';
 import Layout from '../../../components/Layout';
 import { supabase } from '../../../lib/supabase';
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Progress } from "@/components/ui/progress"
-import { Alert, AlertDescription } from "@/components/ui/alert"
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Progress } from '@/components/ui/progress';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 interface Exercise {
   id: number;
@@ -52,7 +52,7 @@ export default function LogWorkout({ params }: { params: { planId: string } }) {
     let interval: NodeJS.Timeout;
     if (isWorkoutActive) {
       interval = setInterval(() => {
-        setWorkoutTimer((prev) => prev + 1);
+        setWorkoutTimer(prev => prev + 1);
       }, 1000);
     }
     return () => clearInterval(interval);
@@ -62,7 +62,7 @@ export default function LogWorkout({ params }: { params: { planId: string } }) {
     let interval: NodeJS.Timeout;
     if (isSetActive) {
       interval = setInterval(() => {
-        setSetTimer((prev) => prev + 1);
+        setSetTimer(prev => prev + 1);
       }, 1000);
     }
     return () => clearInterval(interval);
@@ -72,7 +72,8 @@ export default function LogWorkout({ params }: { params: { planId: string } }) {
     try {
       const { data, error } = await supabase
         .from('workout_plans')
-        .select(`
+        .select(
+          `
         id,
         name,
         workout_plan_exercises (
@@ -83,7 +84,8 @@ export default function LogWorkout({ params }: { params: { planId: string } }) {
             type
           )
         )
-      `)
+      `
+        )
         .eq('id', params.planId)
         .single();
 
@@ -102,8 +104,8 @@ export default function LogWorkout({ params }: { params: { planId: string } }) {
           id: wpe.exercises.id,
           name: wpe.exercises.name,
           type: wpe.exercises.type,
-          sets: wpe.sets
-        }))
+          sets: wpe.sets,
+        })),
       };
 
       setPlan(formattedPlan);
@@ -118,20 +120,23 @@ export default function LogWorkout({ params }: { params: { planId: string } }) {
 
   const initializeLogEntries = (exercises: Exercise[]) => {
     const initialEntries: { [key: string]: SetEntry[] } = {};
-    exercises.forEach((exercise) => {
+    exercises.forEach(exercise => {
       initialEntries[exercise.name] = Array(exercise.sets).fill({ weight: '', reps: '' });
     });
     setLogEntries(initialEntries);
   };
 
-  const handleLogEntry = useCallback((exerciseName: string, setIndex: number, field: 'weight' | 'reps', value: string) => {
-    setLogEntries((prev) => ({
-      ...prev,
-      [exerciseName]: prev[exerciseName].map((set, index) =>
-        index === setIndex ? { ...set, [field]: value } : set
-      ),
-    }));
-  }, []);
+  const handleLogEntry = useCallback(
+    (exerciseName: string, setIndex: number, field: 'weight' | 'reps', value: string) => {
+      setLogEntries(prev => ({
+        ...prev,
+        [exerciseName]: prev[exerciseName].map((set, index) =>
+          index === setIndex ? { ...set, [field]: value } : set
+        ),
+      }));
+    },
+    []
+  );
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -140,7 +145,7 @@ export default function LogWorkout({ params }: { params: { planId: string } }) {
   };
 
   const toggleWorkoutTimer = () => {
-    setIsWorkoutActive((prev) => {
+    setIsWorkoutActive(prev => {
       if (!prev) {
         setStartTime(new Date());
       } else {
@@ -156,9 +161,9 @@ export default function LogWorkout({ params }: { params: { planId: string } }) {
       setIsSetActive(false);
       setSetTimer(0);
       if (currentSetIndex + 1 < (plan?.exercises[currentExerciseIndex]?.sets || 0)) {
-        setCurrentSetIndex((prev) => prev + 1);
+        setCurrentSetIndex(prev => prev + 1);
       } else if (currentExerciseIndex + 1 < (plan?.exercises.length || 0)) {
-        setCurrentExerciseIndex((prev) => prev + 1);
+        setCurrentExerciseIndex(prev => prev + 1);
         setCurrentSetIndex(0);
       }
     } else {
@@ -184,7 +189,7 @@ export default function LogWorkout({ params }: { params: { planId: string } }) {
         end_time: endTimeToUse.toISOString(),
         exercises: Object.entries(logEntries).map(([name, sets]) => ({
           name,
-          sets: sets.map((set) => ({
+          sets: sets.map(set => ({
             weight: parseFloat(set.weight) || 0,
             reps: parseInt(set.reps) || 0,
           })),
@@ -234,7 +239,10 @@ export default function LogWorkout({ params }: { params: { planId: string } }) {
     );
   }
 
-  const progress = ((currentExerciseIndex * plan.exercises[0].sets + currentSetIndex) / (plan.exercises.length * plan.exercises[0].sets)) * 100;
+  const progress =
+    ((currentExerciseIndex * plan.exercises[0].sets + currentSetIndex) /
+      (plan.exercises.length * plan.exercises[0].sets)) *
+    100;
 
   return (
     <Layout showBackButton>
@@ -248,12 +256,16 @@ export default function LogWorkout({ params }: { params: { planId: string } }) {
           <div className="flex justify-between items-center">
             <h2 className="text-xl font-semibold">Workout Time: {formatTime(workoutTimer)}</h2>
             <Button
-              variant={isWorkoutActive ? "secondary" : "default"}
+              variant={isWorkoutActive ? 'secondary' : 'default'}
               onClick={toggleWorkoutTimer}
               className="rounded-full px-6"
             >
-              {isWorkoutActive ? <Pause className="mr-2 h-4 w-4" /> : <Play className="mr-2 h-4 w-4" />}
-              {isWorkoutActive ? "Pause" : "Start"}
+              {isWorkoutActive ? (
+                <Pause className="mr-2 h-4 w-4" />
+              ) : (
+                <Play className="mr-2 h-4 w-4" />
+              )}
+              {isWorkoutActive ? 'Pause' : 'Start'}
             </Button>
           </div>
         </CardContent>
@@ -278,25 +290,31 @@ export default function LogWorkout({ params }: { params: { planId: string } }) {
                     type="number"
                     placeholder="Weight (kg)"
                     value={logEntries[exercise.name][setIndex].weight}
-                    onChange={(e) => handleLogEntry(exercise.name, setIndex, 'weight', e.target.value)}
+                    onChange={e =>
+                      handleLogEntry(exercise.name, setIndex, 'weight', e.target.value)
+                    }
                     className="w-28"
                   />
                   <Input
                     type="number"
                     placeholder="Reps"
                     value={logEntries[exercise.name][setIndex].reps}
-                    onChange={(e) => handleLogEntry(exercise.name, setIndex, 'reps', e.target.value)}
+                    onChange={e => handleLogEntry(exercise.name, setIndex, 'reps', e.target.value)}
                     className="w-28"
                   />
                 </div>
                 {exerciseIndex === currentExerciseIndex && setIndex === currentSetIndex && (
                   <Button
-                    variant={isSetActive ? "secondary" : "default"}
+                    variant={isSetActive ? 'secondary' : 'default'}
                     onClick={toggleSetTimer}
                     className="self-start rounded-full"
                   >
-                    {isSetActive ? <Pause className="mr-2 h-4 w-4" /> : <Play className="mr-2 h-4 w-4" />}
-                    {isSetActive ? formatTime(setTimer) : "Start Set"}
+                    {isSetActive ? (
+                      <Pause className="mr-2 h-4 w-4" />
+                    ) : (
+                      <Play className="mr-2 h-4 w-4" />
+                    )}
+                    {isSetActive ? formatTime(setTimer) : 'Start Set'}
                   </Button>
                 )}
               </div>
@@ -316,4 +334,3 @@ export default function LogWorkout({ params }: { params: { planId: string } }) {
     </Layout>
   );
 }
-

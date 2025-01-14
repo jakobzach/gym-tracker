@@ -3,11 +3,17 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Layout from '../../components/Layout';
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select"
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from '@/components/ui/select';
 import { supabase } from '../../lib/supabase';
 import { Trash2 } from 'lucide-react';
 
@@ -28,7 +34,10 @@ export default function CreatePlan() {
 
   const addExercise = () => {
     if (exerciseName && exerciseType && sets) {
-      setExercises([...exercises, { name: exerciseName, type: exerciseType, sets: parseInt(sets) }]);
+      setExercises([
+        ...exercises,
+        { name: exerciseName, type: exerciseType, sets: parseInt(sets) },
+      ]);
       setExerciseName('');
       setSets('');
     }
@@ -106,29 +115,42 @@ export default function CreatePlan() {
           <CardTitle className="text-2xl font-bold">Create Workout Plan</CardTitle>
         </CardHeader>
         <CardContent>
-          {error && <Alert variant="destructive"><AlertDescription>{error}</AlertDescription></Alert>}
+          {error && (
+            <Alert variant="destructive">
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
           <div className="space-y-4">
             <div className="space-y-2">
-              <label htmlFor="planName" className="text-sm font-medium">Plan Name</label>
+              <label htmlFor="planName" className="text-sm font-medium">
+                Plan Name
+              </label>
               <Input
                 id="planName"
                 value={planName}
-                onChange={(e) => setPlanName(e.target.value)}
+                onChange={e => setPlanName(e.target.value)}
                 placeholder="Enter plan name"
               />
             </div>
             <div className="space-y-2">
-              <label htmlFor="exerciseName" className="text-sm font-medium">Exercise Name</label>
+              <label htmlFor="exerciseName" className="text-sm font-medium">
+                Exercise Name
+              </label>
               <Input
                 id="exerciseName"
                 value={exerciseName}
-                onChange={(e) => setExerciseName(e.target.value)}
+                onChange={e => setExerciseName(e.target.value)}
                 placeholder="Enter exercise name"
               />
             </div>
             <div className="space-y-2">
-              <label htmlFor="exerciseType" className="text-sm font-medium">Exercise Type</label>
-              <Select value={exerciseType} onValueChange={(value: Exercise['type']) => setExerciseType(value)}>
+              <label htmlFor="exerciseType" className="text-sm font-medium">
+                Exercise Type
+              </label>
+              <Select
+                value={exerciseType}
+                onValueChange={(value: Exercise['type']) => setExerciseType(value)}
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="Select exercise type" />
                 </SelectTrigger>
@@ -143,12 +165,14 @@ export default function CreatePlan() {
               </Select>
             </div>
             <div className="space-y-2">
-              <label htmlFor="sets" className="text-sm font-medium">Sets</label>
+              <label htmlFor="sets" className="text-sm font-medium">
+                Sets
+              </label>
               <Input
                 id="sets"
                 type="number"
                 value={sets}
-                onChange={(e) => setSets(e.target.value)}
+                onChange={e => setSets(e.target.value)}
                 placeholder="Enter number of sets"
               />
             </div>
@@ -160,7 +184,9 @@ export default function CreatePlan() {
               <div key={index} className="flex items-center justify-between py-2 border-b">
                 <div>
                   <p className="font-medium">{exercise.name}</p>
-                  <p className="text-sm text-gray-500">{exercise.type} - {exercise.sets} sets</p>
+                  <p className="text-sm text-gray-500">
+                    {exercise.type} - {exercise.sets} sets
+                  </p>
                 </div>
                 <Button variant="ghost" size="sm" onClick={() => removeExercise(index)}>
                   <Trash2 className="h-4 w-4" />
@@ -168,11 +194,7 @@ export default function CreatePlan() {
               </div>
             ))}
           </div>
-          <Button 
-            onClick={savePlan} 
-            className="w-full mt-6"
-            disabled={!isFormValid}
-          >
+          <Button onClick={savePlan} className="w-full mt-6" disabled={!isFormValid}>
             Save Plan
           </Button>
         </CardContent>
@@ -180,4 +202,3 @@ export default function CreatePlan() {
     </Layout>
   );
 }
-

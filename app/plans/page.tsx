@@ -3,11 +3,19 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Layout from '../../components/Layout';
-import { Button } from "@/components/ui/button"
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
+import { Button } from '@/components/ui/button';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import {
+  Dialog,
+  _DialogTrigger as DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
 import { supabase } from '../../lib/supabase';
 import { Plus, Edit, Copy } from 'lucide-react';
 
@@ -39,12 +47,15 @@ export default function Plans() {
 
   const fetchPlans = async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) throw new Error('No user found');
 
       const { data, error } = await supabase
         .from('workout_plans')
-        .select(`
+        .select(
+          `
           id,
           name,
           workout_plan_exercises (
@@ -55,7 +66,8 @@ export default function Plans() {
               type
             )
           )
-        `)
+        `
+        )
         .eq('user_id', user.id);
 
       if (error) throw error;
@@ -67,8 +79,8 @@ export default function Plans() {
           id: wpe.exercises.id,
           name: wpe.exercises.name,
           type: wpe.exercises.type,
-          sets: wpe.sets
-        }))
+          sets: wpe.sets,
+        })),
       }));
 
       setPlans(formattedPlans);
@@ -97,7 +109,9 @@ export default function Plans() {
     if (!selectedPlan) return;
 
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) throw new Error('No user found');
 
       // Create new plan
@@ -113,7 +127,7 @@ export default function Plans() {
       const exercisesToInsert = selectedPlan.exercises.map(exercise => ({
         workout_plan_id: newPlanData.id,
         exercise_id: exercise.id,
-        sets: exercise.sets
+        sets: exercise.sets,
       }));
 
       const { error: insertError } = await supabase
@@ -130,11 +144,21 @@ export default function Plans() {
   };
 
   if (loading) {
-    return <Layout><div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900"></div></Layout>;
+    return (
+      <Layout>
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900"></div>
+      </Layout>
+    );
   }
 
   if (error) {
-    return <Layout><Alert variant="destructive"><AlertDescription>{error}</AlertDescription></Alert></Layout>;
+    return (
+      <Layout>
+        <Alert variant="destructive">
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      </Layout>
+    );
   }
 
   return (
@@ -146,7 +170,7 @@ export default function Plans() {
         </Button>
       </div>
       <div className="grid gap-6 md:grid-cols-2">
-        {plans.map((plan) => (
+        {plans.map(plan => (
           <Card key={plan.id}>
             <CardHeader>
               <CardTitle>{plan.name}</CardTitle>
@@ -174,17 +198,17 @@ export default function Plans() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Create a copy of the plan</DialogTitle>
-            <DialogDescription>
-              Enter a name for the new plan
-            </DialogDescription>
+            <DialogDescription>Enter a name for the new plan</DialogDescription>
           </DialogHeader>
           <Input
             value={newPlanName}
-            onChange={(e) => setNewPlanName(e.target.value)}
+            onChange={e => setNewPlanName(e.target.value)}
             placeholder="New plan name"
           />
           <DialogFooter>
-            <Button variant="outline" onClick={() => setOpenDialog(false)}>Cancel</Button>
+            <Button variant="outline" onClick={() => setOpenDialog(false)}>
+              Cancel
+            </Button>
             <Button onClick={handleCreateCopy}>Create</Button>
           </DialogFooter>
         </DialogContent>
@@ -192,4 +216,3 @@ export default function Plans() {
     </Layout>
   );
 }
-

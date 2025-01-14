@@ -1,42 +1,44 @@
 'use client';
 
-import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
-import Layout from '../../components/Layout'
-import { Button } from "@/components/ui/button"
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { supabase } from '../../lib/supabase'
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import Layout from '../../components/Layout';
+import { Button } from '@/components/ui/button';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { _Alert as Alert, _AlertDescription as AlertDescription } from '@/components/ui/alert';
+import { supabase } from '../../lib/supabase';
 
 export default function Dashboard() {
-  const [user, setUser] = useState<any>(null)
-  const [loading, setLoading] = useState(true)
-  const router = useRouter()
+  const [user, setUser] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
     const getProfile = async () => {
       try {
-        setLoading(true)
-        const { data: { user } } = await supabase.auth.getUser()
+        setLoading(true);
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
         if (user) {
           const { data, error } = await supabase
             .from('profiles')
             .select('first_name')
             .eq('id', user.id)
-            .single()
+            .single();
 
-          if (error) throw error
-          setUser({ ...user, first_name: data?.first_name })
+          if (error) throw error;
+          setUser({ ...user, first_name: data?.first_name });
         }
       } catch (error) {
-        console.error('Error in getProfile:', error)
+        console.error('Error in getProfile:', error);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
-    getProfile()
-  }, [])
+    getProfile();
+  }, []);
 
   if (loading) {
     return (
@@ -45,12 +47,12 @@ export default function Dashboard() {
           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900"></div>
         </div>
       </Layout>
-    )
+    );
   }
 
   if (!user) {
-    router.push('/auth/signin')
-    return null
+    router.push('/auth/signin');
+    return null;
   }
 
   return (
@@ -79,6 +81,5 @@ export default function Dashboard() {
         </Card>
       </div>
     </Layout>
-  )
+  );
 }
-
