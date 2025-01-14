@@ -65,7 +65,10 @@ const Layout: React.FC<LayoutProps> = ({ children, showBackButton = false }) => 
               <ArrowLeft className="h-5 w-5" />
             </Button>
           )}
-          <h1 className="text-lg font-semibold">Gym Tracker</h1>
+          <div className="flex items-center space-x-2">
+            <Dumbbell className="h-5 w-5" />
+            <h1 className="text-lg font-semibold">Gym Tracker</h1>
+          </div>
         </div>
       </header>
 
