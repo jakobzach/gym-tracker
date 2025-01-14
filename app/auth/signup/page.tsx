@@ -42,7 +42,7 @@ export default function SignUp() {
       if (signUpError) throw signUpError;
 
       if (data) {
-        router.push('/auth/signin');
+        router.push('/auth/confirmation');
       }
     } catch (error: any) {
       setError(error.message);
