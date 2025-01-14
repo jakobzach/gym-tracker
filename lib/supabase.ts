@@ -12,8 +12,39 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
     autoRefreshToken: true,
     persistSession: true,
     detectSessionInUrl: true,
-  },
-});
+    storageKey: 'gym-tracker-auth',
+    storage: {
+      getItem: (key) => {
+        try {
+          if (typeof window !== 'undefined') {
+            return window.localStorage.getItem(key);
+          }
+        } catch (error) {
+          console.warn('localStorage is not available:', error);
+        }
+        return null;
+      },
+      setItem: (key, value) => {
+        try {
+          if (typeof window !== 'undefined') {
+            window.localStorage.setItem(key, value);
+          }
+        } catch (error) {
+          console.warn('localStorage is not available:', error);
+        }
+      },
+      removeItem: (key) => {
+        try {
+          if (typeof window !== 'undefined') {
+            window.localStorage.removeItem(key);
+          }
+        } catch (error) {
+          console.warn('localStorage is not available:', error);
+        }
+      },
+    }
+  }
+})
 
 export const getSession = async () => {
   const { data, error } = await supabase.auth.getSession();
