@@ -1,7 +1,9 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
 
+// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 const supabaseUrl = process.env.SUPABASE_URL!;
+// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 
 const supabaseAdmin = createClient(supabaseUrl, supabaseServiceRoleKey, {
@@ -19,8 +21,8 @@ export async function POST(request: Request) {
   }
 
   try {
-    const { _data, error } = await supabaseAdmin.auth.admin.updateUserById(userId, {
-      email_confirmed: true,
+    const { data, error } = await supabaseAdmin.auth.admin.updateUserById(userId, {
+      email_confirm: true,
     });
 
     if (error) {

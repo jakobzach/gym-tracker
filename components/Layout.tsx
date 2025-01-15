@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { ArrowLeft, Home, Dumbbell, ClipboardList, User } from 'lucide-react';
 import { useRouter, usePathname } from 'next/navigation';
-import { _supabase as supabase, getSession, refreshSession } from '../lib/supabase';
+import { supabase as supabase, getSession, refreshSession } from '../lib/supabase';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 
@@ -27,7 +27,7 @@ const Layout: React.FC<LayoutProps> = ({ children, showBackButton = false }) => 
 
       if (session) {
         const {
-          data: { _user: user },
+          data: { user: user },
         } = await supabase.auth.getUser();
         setUser(user);
         setLoading(false);
