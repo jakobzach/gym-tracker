@@ -8,14 +8,7 @@ import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import {
-  Card,
-  _CardDescription as CardDescription,
-  CardContent,
-  _CardHeader as CardHeader,
-  _CardTitle as CardTitle,
-  CardFooter,
-} from '@/components/ui/card';
+import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
 export default function SignUp() {
@@ -49,32 +42,33 @@ export default function SignUp() {
       if (signUpError) throw signUpError;
 
       if (data?.user) {
+        console.log('Auth signup successful. User data:', {
+          id: data.user.id,
+          email: data.user.email,
+        });
+
         // Create profile record
-        const { error: profileError } = await supabase.from('profiles').insert([
-          {
-            id: data.user.id,
-            first_name: formData.firstName,
-            last_name: formData.lastName,
-            email: formData.email,
-          },
-        ]);
+        const profileData = {
+          id: data.user.id,
+          first_name: formData.firstName,
+          last_name: formData.lastName,
+        };
+        console.log('Attempting to create profile with data:', profileData);
+
+        const { error: profileError } = await supabase.from('profiles').insert([profileData]);
 
         if (profileError) {
-          // Delete the auth user if profile creation fails
-          await supabase.auth.admin.deleteUser(data.user.id);
-          throw new Error('Failed to create user profile. Please try again.');
+          console.error('Profile creation failed. Error:', profileError);
+          throw new Error(
+            'Failed to create user profile. Please try again later or contact support.'
+          );
         }
 
+        console.log('Profile created successfully');
         router.push('/auth/confirmation');
       }
     } catch (error: any) {
       setError(error.message);
-      // If there was an error creating the profile, we want to show a more user-friendly message
-      if (error.message.includes('Failed to create user profile')) {
-        setError(
-          'Something went wrong while creating your account. Please try again or contact support.'
-        );
-      }
     } finally {
       setLoading(false);
     }

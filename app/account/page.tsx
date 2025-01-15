@@ -9,7 +9,6 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import {
   Dialog,
-  _DialogTrigger as DialogTrigger,
   DialogContent,
   DialogHeader,
   DialogTitle,
@@ -35,7 +34,7 @@ export default function Account() {
     const getProfile = async () => {
       try {
         const {
-          data: { _user: user },
+          data: { user: user },
         } = await supabase.auth.getUser();
         if (user) {
           setUser(user);
@@ -72,7 +71,7 @@ export default function Account() {
 
     try {
       const {
-        data: { _user: user },
+        data: { user: user },
       } = await supabase.auth.getUser();
       if (!user) {
         throw new Error('No user found');

@@ -57,7 +57,7 @@ export default [
       '@next/next/no-html-link-for-pages': 'off',
 
       // General rules
-      'no-console': 'warn',
+      'no-console': 'off',
       'no-unused-vars': 'off', // Turned off in favor of @typescript-eslint/no-unused-vars
       'prettier/prettier': ['error', {}, { usePrettierrc: true }],
 
