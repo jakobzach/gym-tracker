@@ -42,33 +42,32 @@ export default function SignUp() {
       if (signUpError) throw signUpError;
 
       if (data?.user) {
-        console.log('Auth signup successful. User data:', {
-          id: data.user.id,
-          email: data.user.email,
-        });
-
         // Create profile record
-        const profileData = {
-          id: data.user.id,
-          first_name: formData.firstName,
-          last_name: formData.lastName,
-        };
-        console.log('Attempting to create profile with data:', profileData);
-
-        const { error: profileError } = await supabase.from('profiles').insert([profileData]);
+        const { error: profileError } = await supabase.from('profiles').insert([
+          {
+            id: data.user.id,
+            first_name: formData.firstName,
+            last_name: formData.lastName,
+            email: formData.email,
+          },
+        ]);
 
         if (profileError) {
-          console.error('Profile creation failed. Error:', profileError);
-          throw new Error(
-            'Failed to create user profile. Please try again later or contact support.'
-          );
+          // Delete the auth user if profile creation fails
+          await supabase.auth.admin.deleteUser(data.user.id);
+          throw new Error('Failed to create user profile. Please try again.');
         }
 
-        console.log('Profile created successfully');
         router.push('/auth/confirmation');
       }
     } catch (error: any) {
       setError(error.message);
+      // If there was an error creating the profile, we want to show a more user-friendly message
+      if (error.message.includes('Failed to create user profile')) {
+        setError(
+          'Something went wrong while creating your account. Please try again or contact support.'
+        );
+      }
     } finally {
       setLoading(false);
     }
@@ -95,14 +94,12 @@ export default function SignUp() {
       <div className="lg:p-8">
         <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
           <div className="flex flex-col space-y-2 text-center">
-            <h1 className="text-2xl font-semibold tracking-tight">Create an account</h1>
-            <p className="text-sm text-muted-foreground">
-              Enter your details below to create your account
-            </p>
+            <h1>Create an account</h1>
+            <p className="text-content">Enter your details below to create your account</p>
           </div>
-          <Card>
+          <Card className="p-2">
             <form onSubmit={handleSubmit}>
-              <CardContent className="pt-6 space-y-4">
+              <CardContent className="pt-6 pb-2 px-4 space-y-6">
                 {error && (
                   <Alert variant="destructive">
                     <AlertDescription>{error}</AlertDescription>
@@ -153,14 +150,14 @@ export default function SignUp() {
                   />
                 </div>
               </CardContent>
-              <CardFooter className="flex flex-col space-y-4">
+              <CardFooter className="flex flex-col space-y-4 px-4 pb-6 pt-2">
                 <Button type="submit" className="w-full" disabled={loading}>
                   {loading ? 'Creating account...' : 'Create account'}
                 </Button>
               </CardFooter>
             </form>
           </Card>
-          <p className="px-8 text-center text-sm text-muted-foreground">
+          <p className="px-2 text-center text-sm text-muted-foreground">
             Already have an account?{' '}
             <Link href="/auth/signin" className="underline underline-offset-4 hover:text-primary">
               Sign in

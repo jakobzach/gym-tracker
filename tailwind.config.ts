@@ -9,6 +9,26 @@ const config: Config = {
     '*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
+    container: {
+      center: true,
+      padding: {
+        DEFAULT: '1rem',
+        sm: '1.5rem',
+        lg: '2rem',
+      },
+      screens: {
+        sm: '390px', // iPhone 12
+        md: '640px', // Tablets
+        lg: '1024px', // Desktop
+        xl: '1280px', // Large desktop
+      },
+    },
+    screens: {
+      sm: '390px', // iPhone 12
+      md: '640px', // Tablets
+      lg: '1024px', // Desktop
+      xl: '1280px', // Large desktop
+    },
     extend: {
       colors: {
         background: 'hsl(var(--background))',
