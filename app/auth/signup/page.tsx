@@ -48,14 +48,11 @@ export default function SignUp() {
             id: data.user.id,
             first_name: formData.firstName,
             last_name: formData.lastName,
-            email: formData.email,
           },
         ]);
 
         if (profileError) {
-          // Delete the auth user if profile creation fails
-          await supabase.auth.admin.deleteUser(data.user.id);
-          throw new Error('Failed to create user profile. Please try again.');
+          throw new Error('Failed to create user profile. Please try again or contact support.');
         }
 
         router.push('/auth/confirmation');
