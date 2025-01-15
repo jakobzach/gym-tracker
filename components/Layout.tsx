@@ -72,47 +72,103 @@ const Layout: React.FC<LayoutProps> = ({ children, showBackButton = false }) => 
 
       <main className="flex-1 container max-w-screen-xl py-6">{children}</main>
 
-      <nav className="sticky bottom-0 z-50 w-full border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container max-w-screen-xl grid h-16 grid-cols-4 items-center px-4">
+      <nav className="sticky bottom-0 z-50 w-full border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 safe-area-bottom">
+        <div className="container max-w-screen-xl h-16 grid grid-cols-4 items-center px-4 md:px-6">
           <Link
             href="/dashboard"
             className={cn(
-              'flex flex-col items-center justify-center py-2 hover:text-primary',
+              'group relative flex flex-col items-center justify-center space-y-1 py-1',
               pathname === '/dashboard' ? 'text-primary' : 'text-muted-foreground'
             )}
           >
-            <Home className="h-5 w-5" />
-            <span className="text-xs font-medium">Home</span>
+            <Home
+              className={cn(
+                'h-5 w-5 transition-all duration-200 ease-in-out',
+                pathname === '/dashboard' ? 'scale-110' : 'group-hover:scale-110'
+              )}
+            />
+            <span
+              className={cn(
+                'text-xs font-medium transition-all duration-200 leading-none',
+                pathname === '/dashboard'
+                  ? 'translate-y-0.5 opacity-100'
+                  : 'opacity-70 group-hover:opacity-100 group-hover:translate-y-0.5'
+              )}
+            >
+              Home
+            </span>
           </Link>
           <Link
             href="/workouts"
             className={cn(
-              'flex flex-col items-center justify-center py-2 hover:text-primary',
+              'group relative flex flex-col items-center justify-center space-y-1 py-1',
               pathname === '/workouts' ? 'text-primary' : 'text-muted-foreground'
             )}
           >
-            <Dumbbell className="h-5 w-5" />
-            <span className="text-xs font-medium">Workouts</span>
+            <Dumbbell
+              className={cn(
+                'h-5 w-5 transition-all duration-200 ease-in-out',
+                pathname === '/workouts' ? 'scale-110' : 'group-hover:scale-110'
+              )}
+            />
+            <span
+              className={cn(
+                'text-xs font-medium transition-all duration-200 leading-none',
+                pathname === '/workouts'
+                  ? 'translate-y-0.5 opacity-100'
+                  : 'opacity-70 group-hover:opacity-100 group-hover:translate-y-0.5'
+              )}
+            >
+              Workouts
+            </span>
           </Link>
           <Link
             href="/plans"
             className={cn(
-              'flex flex-col items-center justify-center py-2 hover:text-primary',
+              'group relative flex flex-col items-center justify-center space-y-1 py-1',
               pathname === '/plans' ? 'text-primary' : 'text-muted-foreground'
             )}
           >
-            <ClipboardList className="h-5 w-5" />
-            <span className="text-xs font-medium">Plans</span>
+            <ClipboardList
+              className={cn(
+                'h-5 w-5 transition-all duration-200 ease-in-out',
+                pathname === '/plans' ? 'scale-110' : 'group-hover:scale-110'
+              )}
+            />
+            <span
+              className={cn(
+                'text-xs font-medium transition-all duration-200 leading-none',
+                pathname === '/plans'
+                  ? 'translate-y-0.5 opacity-100'
+                  : 'opacity-70 group-hover:opacity-100 group-hover:translate-y-0.5'
+              )}
+            >
+              Plans
+            </span>
           </Link>
           <Link
             href="/account"
             className={cn(
-              'flex flex-col items-center justify-center py-2 hover:text-primary',
+              'group relative flex flex-col items-center justify-center space-y-1 py-1',
               pathname === '/account' ? 'text-primary' : 'text-muted-foreground'
             )}
           >
-            <User className="h-5 w-5" />
-            <span className="text-xs font-medium">Account</span>
+            <User
+              className={cn(
+                'h-5 w-5 transition-all duration-200 ease-in-out',
+                pathname === '/account' ? 'scale-110' : 'group-hover:scale-110'
+              )}
+            />
+            <span
+              className={cn(
+                'text-xs font-medium transition-all duration-200 leading-none',
+                pathname === '/account'
+                  ? 'translate-y-0.5 opacity-100'
+                  : 'opacity-70 group-hover:opacity-100 group-hover:translate-y-0.5'
+              )}
+            >
+              Account
+            </span>
           </Link>
         </div>
       </nav>
