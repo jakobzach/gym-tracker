@@ -1,4 +1,29 @@
 {
+  "[typescript]": {
+    "editor.defaultFormatter": "denoland.vscode-deno"
+  },
+  "css.customData": [
+    ".vscode/css-data.json"
+  ],
+  "deno.enablePaths": [
+    "supabase/functions"
+  ],
+  "deno.lint": true,
+  "deno.unstable": [
+    "bare-node-builtins",
+    "byonm",
+    "sloppy-imports",
+    "unsafe-proto",
+    "webgpu",
+    "broadcast-channel",
+    "worker-options",
+    "cron",
+    "kv",
+    "ffi",
+    "fs",
+    "http",
+    "net"
+  ],
   "files.exclude": {
     "**/.git": true,
     "**/.svn": true,
@@ -6,10 +31,9 @@
     "**/CVS": true,
     "**/.DS_Store": true,
     "**/Thumbs.db": true,
-    "**/.retool_types/**": true,
     "**/*tsconfig.json": true,
+    "**/.retool_types/**": true,
     ".cache": true,
     "retool.config.json": true
-  },
-  "css.customData": [".vscode/css-data.json"]
+  }
 }
